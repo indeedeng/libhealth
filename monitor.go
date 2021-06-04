@@ -31,6 +31,38 @@ type Monitor struct {
 
 var _ HealthMonitor = (*Monitor)(nil)
 
+// NewMonitorWithOptions constructs a new monitor from the provided components and configures optional ones (such as
+// a status channel, timeout, and interval) based on the provided in options.
+func NewMonitorWithOptions(
+	name,
+	description,
+	docURL string,
+	urgency Urgency,
+	check HealthChecker,
+	options ...MonitorOption,
+) *Monitor {
+	monitor := &Monitor{
+		name:        name,
+		timeout:     defaultTimeout,
+		period:      defaultPeriod,
+		description: description,
+		docURL:      docURL,
+		urgency:     urgency,
+		checker:     check,
+		statusChan:  nil,
+
+		previous: NewHealth(OK, "starting up"),
+		lastOk:   epoch,
+		failed:   0,
+	}
+
+	for _, option := range options {
+		option(monitor)
+	}
+
+	return monitor
+}
+
 // NewMonitor will create a new monitor and set some defaults.
 // If desired, pass in a channel and it will be published to when the health state of the monitor changes.
 func NewMonitor(
@@ -41,20 +73,10 @@ func NewMonitor(
 	check HealthChecker,
 	statusChan chan HealthStatus,
 ) *Monitor {
-	return &Monitor{
-		name:        name,
-		timeout:     defaultTimeout,
-		period:      defaultPeriod,
-		description: description,
-		docURL:      docURL,
-		urgency:     urgency,
-		checker:     check,
-		statusChan:  statusChan,
-
-		previous: NewHealth(OK, "starting up"),
-		lastOk:   epoch,
-		failed:   0,
-	}
+	return NewMonitorWithOptions(
+		name, description, docURL, urgency, check,
+		WithStatusChan(statusChan),
+	)
 }
 
 type HealthStatus struct {
