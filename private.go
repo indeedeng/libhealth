@@ -26,8 +26,9 @@ const (
 var allowlistEnv = []string{"HOME", "LANG", "PATH", "PWD", "TMPDIR", "SHELL", "USER"}
 
 // Private is an http.Handler for
-//      /private/healthcheck
-//      /private/healthcheck/live
+//
+//	/private/healthcheck
+//	/private/healthcheck/live
 type Private struct {
 	dependencies DependencySet
 	appName      string

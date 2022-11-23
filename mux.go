@@ -5,10 +5,10 @@ import (
 )
 
 // WrapServeMux will wrap mux with Handlers for
-//  - /private/healthcheck
-//  - /private/healthcheck/live
-//  - /info/healthcheck
-//  - /info/healthcheck/live
+//   - /private/healthcheck
+//   - /private/healthcheck/live
+//   - /info/healthcheck
+//   - /info/healthcheck/live
 func WrapServeMux(
 	mux *http.ServeMux,
 	appname string,
