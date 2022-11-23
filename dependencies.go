@@ -17,15 +17,24 @@ type BasicDependencySet struct {
 	cached   map[string]Result
 	lock     sync.RWMutex // locks the map structure, but not the values
 
+	ctx context.Context
+
 	initialRunWg sync.WaitGroup
 }
 
 // NewBasicDependencySet will create a new BasicDependencySet instance and
 // register all of the provided HealthMonitor instances.
 func NewBasicDependencySet(monitors ...HealthMonitor) *BasicDependencySet {
+	return NewBasicDependencySetWithContext(context.Background(), monitors...)
+}
+
+// NewBasicDependencySet will create a new BasicDependencySet instance using
+// a specific context and register all of the provided HealthMonitor instances.
+func NewBasicDependencySetWithContext(ctx context.Context, monitors ...HealthMonitor) *BasicDependencySet {
 	deps := &BasicDependencySet{
 		monitors: make(map[string]HealthMonitor),
 		cached:   make(map[string]Result),
+		ctx:      ctx,
 	}
 	deps.Register(monitors...)
 	return deps
@@ -76,13 +85,13 @@ func (d *BasicDependencySet) waitUntilInitialRun() {
 }
 
 func (d *BasicDependencySet) run(monitor HealthMonitor, now time.Time) Result {
-	result := performCheck(monitor, now)
+	result := performCheck(d.ctx, monitor, now)
 	d.update(monitor, &result)
 	return result
 }
 
-func performCheck(monitor HealthMonitor, startTime time.Time) Result {
-	ctx, cancelFunc := context.WithDeadline(context.Background(), startTime.Add(monitor.Timeout()))
+func performCheck(ctx context.Context, monitor HealthMonitor, startTime time.Time) Result {
+	ctx, cancelFunc := context.WithDeadline(ctx, startTime.Add(monitor.Timeout()))
 	defer cancelFunc()
 
 	select {

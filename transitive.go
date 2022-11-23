@@ -41,7 +41,7 @@ func TransitiveMonitor(
 		func(ctx context.Context) Health {
 			start := time.Now()
 
-			req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+			req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, http.NoBody)
 			if err != nil {
 				return errorHealth(err, start)
 			}

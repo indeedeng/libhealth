@@ -97,7 +97,8 @@ func (bs *Buckets) Increment(delta Value) {
 //
 // In this example the most recently completed bucket
 // contains the value of 3.
-//   "[1, 3, 5, 2]"
+//
+//	"[1, 3, 5, 2]"
 func (bs *Buckets) Compare(f Cmp, v Value) bool {
 	// force refresh
 	bs.Increment(Zero(bs.buckets[0]))

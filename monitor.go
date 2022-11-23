@@ -163,14 +163,14 @@ func (m *Monitor) Urgency() Urgency {
 
 func (m *Monitor) LastOk() time.Time {
 	m.lock.RLock()
-	defer m.lock.RUnlock() //nolint:gocritic
+	defer m.lock.RUnlock()
 
 	return m.lastOk
 }
 
 func (m *Monitor) Failed() int {
 	m.lock.RLock()
-	defer m.lock.RUnlock() //nolint:gocritic
+	defer m.lock.RUnlock()
 
 	return m.failed
 }

@@ -15,8 +15,9 @@ const (
 )
 
 // Info is an http.Handler for
-//      /info/healthcheck
-//      /info/healthcheck/live.
+//
+//	/info/healthcheck
+//	/info/healthcheck/live.
 type Info struct {
 	deps DependencySet
 }
